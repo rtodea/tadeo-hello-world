@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>hello, tadeo.</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: #0a0e0a;
+    color: #4ce04c;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    min-height: 100vh;
+  }
+  body {
+    padding: 2.5rem 1.5rem;
+    max-width: 760px;
+    margin: 0 auto;
+    text-shadow: 0 0 4px rgba(76, 224, 76, 0.35);
+    font-size: 13px;
+    line-height: 1.55;
+  }
+  /* CRT scan lines */
+  body::before {
+    content: "";
+    position: fixed; inset: 0;
+    background: linear-gradient(transparent 50%, rgba(0, 0, 0, 0.18) 50%);
+    background-size: 100% 4px;
+    pointer-events: none;
+    z-index: 100;
+  }
+  /* faint vignette */
+  body::after {
+    content: "";
+    position: fixed; inset: 0;
+    background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.5) 100%);
+    pointer-events: none;
+    z-index: 99;
+  }
+  pre.banner { color: #6df06d; line-height: 1.05; font-size: 11px; margin: 0 0 1.5em; }
+  h1 { color: #fff8aa; font-size: 17px; margin: 1.2em 0 .3em; font-weight: 600; }
+  h2 { color: #ffaa44; font-size: 13px; margin: 1.4em 0 .3em; }
+  .key { color: #66ddff; display: inline-block; min-width: 9ch; }
+  .val { color: #f4f4f4; }
+  .dim { opacity: 0.55; }
+  .ok { color: #88ff88; }
+  a { color: #66bbff; text-decoration: none; border-bottom: 1px dotted #66bbff; }
+  a:hover { color: #fff; border-bottom-color: #fff; }
+  .cursor {
+    display: inline-block; width: 9px; height: 16px;
+    background: #4ce04c; margin-left: 3px; vertical-align: -3px;
+    animation: blink 1.05s steps(2) infinite;
+    box-shadow: 0 0 5px #4ce04c;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+  hr { border: none; border-top: 1px dashed rgba(76, 224, 76, 0.3); margin: 1.8em 0 1em; }
+  ul { padding: 0; margin: 0.3em 0; list-style: none; }
+  li { padding: 1px 0; }
+  .prompt::before { content: "$ "; color: #ffaa44; }
+</style>
+</head>
+<body>
+<pre class="banner">
+   _          _ _              _              _
+  | |__   ___| | | ___        | |_ __ _  __| | ___  ___
+  | '_ \ / _ \ | |/ _ \    _  | __/ _` |/ _` |/ _ \/ _ \
+  | | | |  __/ | | (_) |  | |_| || (_| | (_| |  __/ (_) |
+  |_| |_|\___|_|_|\___( )  \___/\__\__,_|\__,_|\___|\___/
+                      |/
+                                            v0.1 // microcosmos
+</pre>
+
+<p class="dim"># last login: just now, on console (you're inside a tiny single-node k3s)</p>
+
+<h1>echo "hello, world"<span class="cursor"></span></h1>
+
+<h2 class="prompt">uname -a</h2>
+<ul>
+  <li><span class="key">arch:</span>    <span class="val">aarch64 (ARM64)</span></li>
+  <li><span class="key">host:</span>    <span class="val">hetzner CAX41 in fsn1</span></li>
+  <li><span class="key">specs:</span>   <span class="val">16 vCPU &middot; 32 GiB RAM &middot; 305 GiB SSD</span></li>
+  <li><span class="key">os:</span>      <span class="val">ubuntu 24.04 (kernel 6.8)</span></li>
+</ul>
+
+<h2 class="prompt">kubectl describe (this page)</h2>
+<ul>
+  <li><span class="key">cluster:</span> <span class="val">k3s v1.34 (single node)</span></li>
+  <li><span class="key">ingress:</span> <span class="val">traefik &middot; klipper-lb</span></li>
+  <li><span class="key">tls:</span>     <span class="val">let's encrypt &middot; <span class="ok">*.tadeo.ro wildcard</span></li>
+  <li><span class="key">dns:</span>     <span class="val">cloudflare (grey cloud / DNS-only)</span></li>
+  <li><span class="key">image:</span>   <span class="val">registry.tadeo.ro/hello:0.1 (~5 MiB)</span></li>
+  <li><span class="key">limits:</span>  <span class="val">10m cpu / 32 MiB mem</span></li>
+</ul>
+
+<h2 class="prompt">cat how-it-got-here.txt</h2>
+<p>somebody opened a text editor, typed yaml, ran <code>git push</code>.</p>
+<p>argocd was watching <a href="https://github.com/rtodea/tadeo-microcosmos">tadeo-microcosmos</a>,
+saw the change, applied the manifests, k3s pulled the image from
+<code>registry.tadeo.ro</code>, and now this page is talking to you.</p>
+<p>that's the whole trick.</p>
+
+<h2 class="prompt">ls /next</h2>
+<ul>
+  <li>- streaming-101 at timjs.tadeo.ro (real app, two services, FFmpeg)</li>
+  <li>- secrets via SOPS + age (no more plaintext in /etc/rancher/k3s)</li>
+  <li>- maybe a postgres for fun</li>
+</ul>
+
+<hr>
+<p class="dim">
+  &gt;&nbsp;<a href="https://argocd.tadeo.ro">argocd</a>
+  &middot;&nbsp;<span id="now"></span>
+</p>
+
+<script>
+  const tick = () => {
+    document.getElementById('now').textContent = new Date().toUTCString();
+  };
+  tick();
+  setInterval(tick, 1000);
+</script>
+</body>
+</html>
