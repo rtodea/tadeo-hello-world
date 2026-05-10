@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello
+  namespace: hello
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hello
+  template:
+    metadata:
+      labels:
+        app: hello
+    spec:
+      containers:
+        - name: hello
+          # Argo CD Image Updater (in tadeo-microcosmos's Application) bumps this tag
+          # automatically when a new SHA-tagged image lands in the registry.
+          image: registry.tadeo.ro/hello:ab5a78e
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              memory: 32Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello
+  namespace: hello
+spec:
+  selector:
+    app: hello
+  ports:
+    - port: 80
+      targetPort: 80
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: tadeo-ro-wildcard
+  namespace: hello
+spec:
+  secretName: tadeo-ro-wildcard-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: "*.tadeo.ro"
+  dnsNames:
+    - "tadeo.ro"
+    - "*.tadeo.ro"
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: hello
+  namespace: hello
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`hello.tadeo.ro`)
+      kind: Rule
+      services:
+        - name: hello
+          port: 80
+  tls:
+    secretName: tadeo-ro-wildcard-tls
