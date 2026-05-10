@@ -7,5 +7,5 @@ resources:
 # whenever a new SHA-tagged image lands in registry.tadeo.ro.
 images:
   - name: registry.tadeo.ro/hello
-    newTag: 86ed10f
+    newTag: 8cac005
     newName: registry.tadeo.ro/hello
