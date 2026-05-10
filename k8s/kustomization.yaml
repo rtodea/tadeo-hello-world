@@ -1,12 +1,11 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-
 resources:
   - manifests.yaml
-
 # Argo CD Image Updater (configured via annotations on the Application
 # in tadeo-microcosmos:apps/apps/hello.yaml) updates `newTag:` below
 # whenever a new SHA-tagged image lands in registry.tadeo.ro.
 images:
   - name: registry.tadeo.ro/hello
-    newTag: ab5a78e
+    newTag: 86ed10f
+    newName: registry.tadeo.ro/hello
