@@ -2,6 +2,13 @@ name: build
 on:
   push:
     branches: [main]
+    # Image Updater bumps k8s/kustomization.yaml whenever a new image lands.
+    # Excluding k8s/** from the trigger prevents a build -> bump -> build loop.
+    # The Dockerfile doesn't COPY k8s/, so manifests-only commits would produce
+    # identical images anyway.
+    paths-ignore:
+      - 'k8s/**'
+      - '**/*.md'
   workflow_dispatch:   # let me trigger manually from the Actions tab
 
 # Single in-flight build per ref; later commits cancel earlier in-flight runs
