@@ -15,9 +15,12 @@ spec:
     spec:
       containers:
         - name: hello
-          # Argo CD Image Updater (in tadeo-microcosmos's Application) bumps this tag
-          # automatically when a new SHA-tagged image lands in the registry.
-          image: registry.tadeo.ro/hello:ab5a78e
+          # Placeholder tag: the live tag is set in kustomization.yaml (images: newTag).
+          # Argo CD Image Updater bumps kustomization.yaml; this line is never read by
+          # kustomize for tag purposes — only the image *name* is matched. If you ever
+          # `kubectl apply -f manifests.yaml` directly (bypassing kustomize), the pod
+          # will ImagePullBackOff — by design, so the misuse is loud, not silent.
+          image: registry.tadeo.ro/hello:overridden-by-kustomize
           ports:
             - containerPort: 80
           resources:
